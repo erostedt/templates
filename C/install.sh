@@ -6,6 +6,12 @@ if [ ! -f "CMakeLists.txt" ]; then
     exit 1
 fi
 
+# Set the build type based on the passed argument
+BUILD_TYPE="Debug"  # Default build type
+if [ "$1" == "Release" ]; then
+    BUILD_TYPE="Release"
+fi
+
 # Create a build directory if it doesn't exist
 if [ ! -d "build" ]; then
     mkdir build
@@ -14,24 +20,18 @@ fi
 # Navigate to the build directory
 cd build
 
-# Run CMake to configure the project
-cmake ..
+# Run CMake to configure the project with the specified build type
+cmake -DCMAKE_BUILD_TYPE=$BUILD_TYPE ..
 
 # Run make to build the project
 make
 
 # Check if make was successful
 if [ $? -eq 0 ]; then
-    echo "Build successful!"
+    echo "Build successful in $BUILD_TYPE mode!"
 else
-    echo "Build failed!"
+    echo "Build failed in $BUILD_TYPE mode!"
 fi
 
-cd ..
-
-# Check if compile_commands.json exists
-if [ -f "compile_commands.json" ]; then
-    rm compile_commands.json
-fi
-
-ln build/compile_commands.json .
+rm ../compile_commands.json
+ln compile_commands.json ..
